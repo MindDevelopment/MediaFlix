@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaFlix - Browse Files</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #141414; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        
+        .navbar { 
+            background: linear-gradient(90deg, #000000, #434343); 
+        }
+        
+        .navbar-brand { 
+            font-weight: bold; 
+            color: #E50914 !important; 
+        }
+        
+        .nav-link { 
+            color: white !important; 
+        }
+        
+        .nav-link:hover { 
+            color: #E50914 !important; 
+        }
+        
+        /* Netflix-style for videos */
+        .netflix-card { 
+            background: #1f1f1f; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .netflix-card:hover { 
+            transform: scale(1.05); 
+        }
+        
+        .netflix-thumbnail { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+        }
+        
+        .netflix-info { 
+            padding: 15px; 
+            background: #2f2f2f; 
+        }
+        
+        /* Instagram-style for images/gifs */
+        .instagram-card { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            color: #262626;
+        }
+        
+        .instagram-header { 
+            padding: 12px 16px; 
+            border-bottom: 1px solid #efefef; 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .instagram-avatar { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+        }
+        
+        .instagram-username { 
+            margin-left: 12px; 
+            font-weight: 600; 
+            font-size: 14px; 
+        }
+        
+        .instagram-image { 
+            width: 100%; 
+            height: 300px; 
+            object-fit: cover; 
+        }
+        
+        .instagram-actions { 
+            padding: 12px 16px; 
+        }
+        
+        .instagram-info { 
+            padding: 0 16px 16px; 
+            font-size: 14px; 
+        }
+        
+        /* Spotify-style for music */
+        .spotify-card { 
+            background: #121212; 
+            border-radius: 8px; 
+            padding: 20px; 
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+            border: 1px solid #282828;
+        }
+        
+        .spotify-card:hover { 
+            background: #1a1a1a; 
+        }
+        
+        .spotify-track { 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .spotify-cover { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 4px; 
+            background: #1db954; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .spotify-info { 
+            margin-left: 15px; 
+            flex-grow: 1; 
+        }
+        
+        .spotify-title { 
+            color: white; 
+            font-weight: 500; 
+            margin: 0; 
+        }
+        
+        .spotify-artist { 
+            color: #b3b3b3; 
+            font-size: 14px; 
+            margin: 0; 
+        }
+        
+        .spotify-controls { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .play-btn { 
+            background: #1db954; 
+            border: none; 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px; 
+            color: black; 
+        }
+        
+        .play-btn:hover { 
+            background: #1ed760; 
+        }
+        
+        /* Category selector */
+        .category-nav { 
+            background: #1f1f1f; 
+            padding: 20px 0; 
+            margin-bottom: 30px; 
+        }
+        
+        .category-btn { 
+            background: transparent; 
+            border: 2px solid #333; 
+            color: #b3b3b3; 
+            padding: 10px 20px; 
+            margin: 0 10px; 
+            border-radius: 25px; 
+            transition: all 0.3s ease;
+        }
+        
+        .category-btn.active, .category-btn:hover { 
+            border-color: #E50914; 
+            background: #E50914; 
+            color: white; 
+        }
+        
+        .upload-section { 
+            background: #1f1f1f; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 30px; 
+        }
+        
+        .btn-upload { 
+            background: #E50914; 
+            border: none; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+        }
+        
+        .btn-upload:hover { 
+            background: #b20710; 
+            color: white; 
+        }
+
+        /* FOLDER STYLES */
+        .folder-card {
+            background: #1f1f1f;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .folder-card:hover {
+            border-color: #E50914;
+            background: #2f2f2f;
+        }
+
+        /* Breadcrumb navigation */
+        .breadcrumb-nav {
+            background: #1f1f1f;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        
+        .breadcrumb-item {
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .breadcrumb-item:hover {
+            color: #E50914;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: white;
+            font-weight: 500;
+        }
+        
+        .breadcrumb-separator {
+            color: #666;
+            margin: 0 8px;
+            font-size: 14px;
+        }
+        
+        .back-nav-button {
+            background: #E50914;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s ease;
+        }
+        
+        .back-nav-button:hover {
+            background: #b20710;
+            color: white;
+        }
+
+        .form-control, .form-select {
+            background: #2f2f2f;
+            border: 1px solid #444;
+            color: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #2f2f2f;
+            border-color: #E50914;
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+        }
+
+        .form-label {
+            color: #b3b3b3;
+        }
+    </style>
+    
+    <!-- Include CSS files -->
+    <link rel="stylesheet" href="/css/musicPlayer.css">
+    <link rel="stylesheet" href="/css/imageViewer.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-photo-video"></i> MediaFlix</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a class="nav-link active" href="/files"><i class="fas fa-folder"></i> Browse</a>
+                <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <a class="nav-link" href="/admin"><i class="fas fa-users-cog"></i> Admin</a>
+                <% } %>
+                <a class="nav-link" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Category Navigation -->
+        <div class="category-nav text-center">
+            <button class="category-btn active" data-category="videos"><i class="fas fa-video"></i> Videos</button>
+            <button class="category-btn" data-category="images"><i class="fas fa-images"></i> Photos</button>
+            <button class="category-btn" data-category="gifs"><i class="fas fa-magic"></i> GIFs</button>
+            <button class="category-btn" data-category="music"><i class="fas fa-music"></i> Music</button>
+        </div>
+
+        <!-- Breadcrumb Navigation -->
+        <div id="breadcrumb-container" style="display: none;"></div>
+
+        <!-- Upload Section (only for developers/admins) -->
+        <% if (typeof user !== 'undefined' && user && (user.role === 'developer' || user.role === 'admin')) { %>
+        <div class="upload-section">
+            <h5><i class="fas fa-upload"></i> Upload Content</h5>
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select id="uploadCategory" class="form-select">
+                        <option value="videos">Videos</option>
+                        <option value="images">Photos</option>
+                        <option value="gifs">GIFs</option>
+                        <option value="music">Music</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Choose File</label>
+                    <input type="file" name="file" id="fileInput" class="form-control" multiple>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPublic">
+                        <label class="form-check-label" for="isPublic">Make Public</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-upload w-100" onclick="MediaManager.uploadFile()">Upload</button>
+                </div>
+            </div>
+            <div id="upload-status" class="mt-3"></div>
+
+            <!-- New Folder Section -->
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <label class="form-label">New Folder Name</label>
+                    <input type="text" id="folderName" class="form-control" placeholder="Enter folder name">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-upload w-100 mt-4" onclick="MediaManager.createFolder()">Create Folder</button>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Content Container -->
+        <div id="content-container">
+            <div class="text-center">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p>Loading content...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Player -->
+    <div id="music-player" class="music-player">
+        <div class="player-content">
+            <div class="album-art-container">
+                <img id="album-art" src="" alt="Album Art">
+            </div>
+            <div class="track-info">
+                <div id="track-title">Select a track</div>
+                <div id="track-artist">Unknown Artist</div>
+            </div>
+            <div class="player-controls">
+                <button id="prev-button"><i class="fas fa-step-backward"></i></button>
+                <button id="play-button"><i class="fas fa-play"></i></button>
+                <button id="next-button"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="progress-section">
+                <span id="current-time">0:00</span>
+                <div class="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <span id="total-time">0:00</span>
+            </div>
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+        <div id="playlist" class="playlist">
+            <ul id="playlist-items"></ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/musicPlayer.js"></script>
+    <script src="/js/imageViewer.js"></script>
+    <script>
+        // COMPLETE MEDIA MANAGER - CLEAN IMPLEMENTATION
+        class MediaManager {
+            constructor() {
+                this.currentCategory = 'videos';
+                this.currentFolder = null;
+                this.currentFolderName = '';
+                this.folderBreadcrumb = [];
+                this.imageFiles = [];
+                this.userRole = '<%= typeof user !== "undefined" && user ? user.role : "guest" %>';
+                this.isAuthorized = this.userRole === 'developer' || this.userRole === 'admin';
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('🚀 MediaManager initialized - Role:', this.userRole);
+                this.bindEvents();
+                this.loadContent();
+            }
+            
+            bindEvents() {
+                // Category buttons
+                document.querySelectorAll('.category-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentCategory = btn.dataset.category;
+                        this.currentFolder = null;
+                        this.currentFolderName = '';
+                        this.folderBreadcrumb = [];
+                        this.loadContent();
+                    });
+                });
+            }
+            
+            async loadContent() {
+                console.log('📂 Loading content for category:', this.currentCategory, 'folder:', this.currentFolder);
+                
+                this.updateBreadcrumb();
+                this.showLoading();
+                
+                try {
+                    // Load folders and files in parallel
+                    const [foldersData, filesData] = await Promise.all([
+                        this.loadFolders(),
+                        this.loadFiles()
+                    ]);
+                    
+                    let html = '';
+                    
+                    // Add folders first
+                    if (foldersData.folders && foldersData.folders.length > 0) {
+                        html += this.renderFolders(foldersData.folders);
+                    }
+                    
+                    // Add files
+                    if (filesData.files && filesData.files.length > 0) {
+                        html += this.renderFiles(filesData.files);
+                    }
+                    
+                    if (!html) {
+                        html = '<div class="alert alert-info">No content found in this category</div>';
+                    }
+                    
+                    document.getElementById('content-container').innerHTML = html;
+                    
+                    console.log('✅ Content loaded successfully');
+                    
+                } catch (error) {
+                    console.error('❌ Error loading content:', error);
+                    document.getElementById('content-container').innerHTML = 
+                        '<div class="alert alert-danger">Failed to load content</div>';
+                }
+            }
+            
+            async loadFolders() {
+                const params = new URLSearchParams({
+                    category: this.currentCategory,
+                    parentId: this.currentFolder || 'null'
+                });
+                
+                const url = `/api/files/folders?${params}`;
+                console.log('📁 Loading folders from:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('📁 Folders response:', data);
+                return data;
+            }
+            
+            async loadFiles() {
+                let url = `/api/files/${this.currentCategory}`;
+                if (this.currentFolder) {
+                    url += `?folderId=${this.currentFolder}`;
+                }
+                
+                console.log('📄 Loading files from:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('📄 Files response:', data);
+                return data;
+            }
+            
+            renderFolders(folders) {
+                let html = '<div class="row mb-4">';
+                
+                folders.forEach(folder => {
+                    html += `
+                        <div class="col-md-3 col-lg-2 mb-3">
+                            <div class="folder-card" onclick="MediaManager.enterFolder('${folder.id}', '${folder.name}')">
+                                <div class="text-center">
+                                    <i class="fas fa-folder fa-2x text-warning"></i>
+                                    <h6 class="mt-2">${folder.name}</h6>`;
+                    
+                    if (this.isAuthorized) {
+                        html += `
+                                    <button onclick="event.stopPropagation(); MediaManager.deleteFolder('${folder.id}')" 
+                                            class="btn btn-sm btn-outline-danger mt-2">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                
+                html += '</div>';
+                return html;
+            }
+            
+            renderFiles(files) {
+                if (this.currentCategory === 'images' || this.currentCategory === 'gifs') {
+                    this.imageFiles = files;
+                }
+                
+                let html = '';
+                
+                if (this.currentCategory === 'videos') {
+                    html = this.renderVideos(files);
+                } else if (this.currentCategory === 'images' || this.currentCategory === 'gifs') {
+                    html = this.renderImages(files);
+                } else if (this.currentCategory === 'music') {
+                    html = this.renderMusic(files);
+                }
+                
+                return html;
+            }
+            
+            renderVideos(files) {
+                let html = '<div class="row">';
+                
+                files.forEach(file => {
+                    html += `
+                        <div class="col-md-4 col-lg-3">
+                            <div class="netflix-card" onclick="MediaManager.playVideo('${file.fileUrl}', '${file.originalName}')">`;
+                    
+                    if (file.thumbnailUrl) {
+                        html += `<img src="${file.thumbnailUrl}" class="netflix-thumbnail" alt="${file.originalName}">`;
+                    } else {
+                        html += `<div class="netflix-thumbnail d-flex align-items-center justify-content-center" style="background:#333;">
+                                    <i class="fas fa-video fa-3x text-white"></i>
+                                </div>`;
+                    }
+                    
+                    html += `
+                                <div class="netflix-info">
+                                    <h6 class="mb-1">${file.originalName}</h6>
+                                    <small class="text-muted">${this.formatFileSize(file.size)}</small>`;
+                    
+                    if (this.isAuthorized) {
+                        html += `
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-danger me-1" onclick="event.stopPropagation(); MediaManager.deleteFile('${file.id}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <a href="${file.downloadUrl}" class="btn btn-sm btn-outline-light" onclick="event.stopPropagation()">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                
+                html += '</div>';
+                return html;
+            }
+            
+            renderImages(files) {
+                let html = '<div class="row justify-content-center">';
+                
+                files.forEach((file, index) => {
+                    html += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="instagram-card">
+                                <div class="instagram-header">
+                                    <div class="instagram-avatar d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    <div class="instagram-username">${file.uploadedBy}</div>
+                                </div>`;
+                    
+                    if (file.thumbnailUrl) {
+                        html += `<img src="${file.thumbnailUrl}" class="instagram-image" alt="${file.originalName}" onclick="MediaManager.viewImage(${index})">`;
+                    } else {
+                        html += `<div class="instagram-image d-flex align-items-center justify-content-center" style="background:#f8f9fa;" onclick="MediaManager.viewImage(${index})">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>`;
+                    }
+                    
+                    html += `
+                                <div class="instagram-actions">
+                                    <i class="fas fa-heart text-danger me-3"></i>
+                                    <i class="fas fa-comment me-3"></i>
+                                    <i class="fas fa-share me-3"></i>
+                                </div>
+                                <div class="instagram-info">
+                                    <strong>${file.originalName}</strong><br>
+                                    <small class="text-muted">
+                                        ${this.formatDate(file.uploadedAt)} • ${this.formatFileSize(file.size)}
+                                    </small>`;
+                    
+                    if (this.isAuthorized) {
+                        html += `
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-danger me-1" onclick="MediaManager.deleteFile('${file.id}')">Delete</button>
+                                        <a href="${file.downloadUrl}" class="btn btn-sm btn-primary">Download</a>
+                                    </div>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                
+                html += '</div>';
+                return html;
+            }
+            
+            renderMusic(files) {
+                let html = '';
+                
+                files.forEach((file, index) => {
+                    const audioId = `audio-${file.id}`;
+                    
+                    html += `
+                        <div class="spotify-card">
+                            <div class="spotify-track">
+                                <div class="spotify-cover">
+                                    <i class="fas fa-music text-black"></i>
+                                </div>
+                                <div class="spotify-info">
+                                    <p class="spotify-title">${file.originalName}</p>
+                                    <p class="spotify-artist">By ${file.uploadedBy} • ${this.formatDate(file.uploadedAt)}</p>
+                                </div>
+                                <div class="spotify-controls">
+                                    <button class="play-btn" onclick="MediaManager.togglePlay('${audioId}', ${index})">
+                                        <i class="fas fa-play"></i>
+                                    </button>`;
+                    
+                    if (this.isAuthorized) {
+                        html += `
+                                    <button class="btn btn-sm btn-outline-danger" onclick="MediaManager.deleteFile('${file.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <a href="${file.downloadUrl}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download"></i>
+                                    </a>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                            <audio id="${audioId}" class="w-100 mt-3" controls>
+                                <source src="${file.fileUrl}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>`;
+                });
+                
+                return html;
+            }
+            
+            enterFolder(folderId, folderName) {
+                console.log('📂 Entering folder:', folderId, folderName);
+                
+                if (this.currentFolder) {
+                    this.folderBreadcrumb.push({
+                        id: this.currentFolder,
+                        name: this.currentFolderName
+                    });
+                }
+                
+                this.currentFolder = folderId;
+                this.currentFolderName = folderName;
+                this.loadContent();
+            }
+            
+            goBack() {
+                console.log('⬅️ Going back');
+                
+                if (this.folderBreadcrumb.length > 0) {
+                    const previousFolder = this.folderBreadcrumb.pop();
+                    this.currentFolder = previousFolder.id;
+                    this.currentFolderName = previousFolder.name;
+                } else {
+                    this.currentFolder = null;
+                    this.currentFolderName = '';
+                }
+                
+                this.loadContent();
+            }
+            
+            goToRoot() {
+                console.log('🏠 Going to root');
+                this.currentFolder = null;
+                this.currentFolderName = '';
+                this.folderBreadcrumb = [];
+                this.loadContent();
+            }
+            
+            goToFolderByIndex(index) {
+                const targetFolder = this.folderBreadcrumb[index];
+                this.folderBreadcrumb = this.folderBreadcrumb.slice(0, index);
+                this.currentFolder = targetFolder.id;
+                this.currentFolderName = targetFolder.name;
+                this.loadContent();
+            }
+            
+            // Static methods for global HTML access
+            static enterFolder(folderId, folderName) {
+                if (window.MediaManager) {
+                    window.MediaManager.enterFolder(folderId, folderName);
+                }
+            }
+            
+            static goBack() {
+                if (window.MediaManager) {
+                    window.MediaManager.goBack();
+                }
+            }
+            
+            static goToRoot() {
+                if (window.MediaManager) {
+                    window.MediaManager.goToRoot();
+                }
+            }
+            
+            static goToFolderByIndex(index) {
+                if (window.MediaManager) {
+                    window.MediaManager.goToFolderByIndex(index);
+                }
+            }
+            
+            static playVideo(videoUrl, title) {
+                if (window.MediaManager) {
+                    window.MediaManager.playVideo(videoUrl, title);
+                }
+            }
+            
+            static viewImage(index) {
+                if (window.MediaManager) {
+                    window.MediaManager.viewImage(index);
+                }
+            }
+            
+            static togglePlay(audioId, index) {
+                if (window.MediaManager) {
+                    window.MediaManager.togglePlay(audioId, index);
+                }
+            }
+            
+            updateBreadcrumb() {
+                const breadcrumbContainer = document.getElementById('breadcrumb-container');
+                
+                if (!this.currentFolder) {
+                    breadcrumbContainer.style.display = 'none';
+                    return;
+                }
+                
+                breadcrumbContainer.style.display = 'block';
+                
+                let html = `
+                    <div class="breadcrumb-nav">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <a href="#" onclick="MediaManager.goToRoot()" class="breadcrumb-item">
+                                    <i class="fas fa-home"></i> ${this.currentCategory.charAt(0).toUpperCase() + this.currentCategory.slice(1)}
+                                </a>`;
+                
+                this.folderBreadcrumb.forEach((folder, index) => {
+                    html += `
+                        <span class="breadcrumb-separator">›</span>
+                        <a href="#" onclick="MediaManager.goToFolderByIndex(${index})" class="breadcrumb-item">${folder.name}</a>`;
+                });
+                
+                html += `
+                        <span class="breadcrumb-separator">›</span>
+                        <span class="breadcrumb-item active">${this.currentFolderName}</span>
+                            </div>
+                            <button onclick="MediaManager.goBack()" class="back-nav-button">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back</span>
+                            </button>
+                        </div>
+                    </div>`;
+                
+                breadcrumbContainer.innerHTML = html;
+            }
+            
+            showLoading() {
+                document.getElementById('content-container').innerHTML = `
+                    <div class="text-center" style="padding: 40px;">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p style="margin-top: 10px;">Loading content...</p>
+                    </div>`;
+            }
+            
+            // File operations
+            static async uploadFile() {
+                const fileInput = document.getElementById('fileInput');
+                const category = document.getElementById('uploadCategory').value;
+                const isPublic = document.getElementById('isPublic').checked;
+                const statusDiv = document.getElementById('upload-status');
+
+                if (fileInput.files.length === 0) {
+                    statusDiv.innerHTML = '<div class="alert alert-warning">Please select at least one file</div>';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('isPublic', isPublic);
+                if (window.MediaManager.currentFolder) {
+                    formData.append('folderId', window.MediaManager.currentFolder);
+                }
+                
+                for (const file of fileInput.files) {
+                    formData.append('file', file);
+                }
+
+                statusDiv.innerHTML = '<div class="alert alert-info">Uploading...</div>';
+
+                try {
+                    const response = await fetch(`/api/files/upload/${category}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        statusDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                    } else {
+                        statusDiv.innerHTML = '<div class="alert alert-success">File uploaded successfully!</div>';
+                        fileInput.value = '';
+                        if (window.MediaManager.currentCategory === category) {
+                            window.MediaManager.loadContent();
+                        }
+                        setTimeout(() => statusDiv.innerHTML = '', 3000);
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = '<div class="alert alert-danger">Upload failed</div>';
+                }
+            }
+            
+            static async createFolder() {
+                const name = document.getElementById('folderName').value.trim();
+                if (!name) {
+                    alert('Please enter a folder name');
+                    return;
+                }
+                
+                const folderData = {
+                    name: name,
+                    category: window.MediaManager.currentCategory,
+                    isPublic: false
+                };
+                
+                if (window.MediaManager.currentFolder) {
+                    folderData.parentId = window.MediaManager.currentFolder;
+                }
+                
+                try {
+                    const response = await fetch('/api/files/folders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(folderData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert('Folder created!');
+                        document.getElementById('folderName').value = '';
+                        window.MediaManager.loadContent();
+                    }
+                } catch (error) {
+                    alert('Failed to create folder');
+                }
+            }
+            
+            static async deleteFile(fileId) {
+                if (!confirm('Are you sure you want to delete this file?')) return;
+
+                try {
+                    const response = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        alert(`Error: ${data.error}`);
+                    } else {
+                        window.MediaManager.loadContent();
+                    }
+                } catch (error) {
+                    alert('Delete failed');
+                }
+            }
+            
+            static async deleteFolder(folderId) {
+                if (!confirm('Are you sure you want to delete this folder?')) return;
+                
+                try {
+                    const response = await fetch(`/api/files/folders/${folderId}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert('Folder deleted successfully!');
+                        window.MediaManager.loadContent();
+                    }
+                } catch (error) {
+                    alert('Failed to delete folder');
+                }
+            }
+            
+            // Media playback
+            playVideo(videoUrl, title) {
+                const modal = `
+                    <div class="modal fade" id="videoModal" tabindex="-1" style="z-index:9999;">
+                      <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content bg-dark">
+                          <div class="modal-header border-0">
+                            <h5 class="modal-title text-white">${title}</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                          </div>
+                          <div class="modal-body text-center">
+                            <video controls autoplay style="max-height:80vh; max-width:100%;" class="d-block mx-auto">
+                              <source src="${videoUrl}" type="video/mp4">
+                              Your browser does not support the video tag.
+                            </video>
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+                
+                document.body.insertAdjacentHTML('beforeend', modal);
+                const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+                videoModal.show();
+                
+                document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+                    this.remove();
+                });
+            }
+            
+            viewImage(index) {
+                if (!window.mediaViewer) {
+                    console.error('MediaViewer not initialized');
+                    return;
+                }
+                
+                const mediaItems = this.imageFiles.map(file => ({
+                    type: file.category === 'gifs' ? 'gif' : 'image',
+                    url: file.fileUrl,
+                    caption: file.originalName
+                }));
+                
+                window.mediaViewer.open(mediaItems, index);
+            }
+            
+            togglePlay(audioId, index) {
+                const audio = document.getElementById(audioId);
+                const button = audio.previousElementSibling.querySelector('.play-btn i');
+                
+                if (audio.paused) {
+                    document.querySelectorAll('audio').forEach(a => {
+                        if (a !== audio) {
+                            a.pause();
+                            const playBtn = a.parentElement.querySelector('.play-btn i');
+                            if (playBtn) {
+                                playBtn.className = 'fas fa-play';
+                            }
+                        }
+                    });
+                    
+                    audio.play();
+                    button.className = 'fas fa-pause';
+                } else {
+                    audio.pause();
+                    button.className = 'fas fa-play';
+                }
+            }
+            
+            // Utility functions
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            formatDate(dateString) {
+                return new Date(dateString).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
+        
+        // Global functions for backward compatibility
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/auth/logout', { method: 'POST' })
+                    .then(() => window.location.href = '/login')
+                    .catch(() => window.location.href = '/login');
+            }
+        }
+        
+        // Initialize MediaManager when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.MediaManager = new MediaManager();
+            console.log('✅ MediaManager ready');
+        });
+    </script>
+
+</body>
+</html>

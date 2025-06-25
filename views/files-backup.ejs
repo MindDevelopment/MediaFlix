@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaFlix - Browse Files</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #141414; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        
+        .navbar { 
+            background: linear-gradient(90deg, #000000, #434343); 
+        }
+        
+        .navbar-brand { 
+            font-weight: bold; 
+            color: #E50914 !important; 
+        }
+        
+        .nav-link { 
+            color: white !important; 
+        }
+        
+        .nav-link:hover { 
+            color: #E50914 !important; 
+        }
+        
+        /* Netflix-style for videos */
+        .netflix-card { 
+            background: #1f1f1f; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .netflix-card:hover { 
+            transform: scale(1.05); 
+        }
+        
+        .netflix-thumbnail { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+        }
+        
+        .netflix-info { 
+            padding: 15px; 
+            background: #2f2f2f; 
+        }
+        
+        /* Instagram-style for images/gifs */
+        .instagram-card { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            color: #262626;
+        }
+        
+        .instagram-header { 
+            padding: 12px 16px; 
+            border-bottom: 1px solid #efefef; 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .instagram-avatar { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+        }
+        
+        .instagram-username { 
+            margin-left: 12px; 
+            font-weight: 600; 
+            font-size: 14px; 
+        }
+        
+        .instagram-image { 
+            width: 100%; 
+            height: 300px; 
+            object-fit: cover; 
+        }
+        
+        .instagram-actions { 
+            padding: 12px 16px; 
+        }
+        
+        .instagram-info { 
+            padding: 0 16px 16px; 
+            font-size: 14px; 
+        }
+        
+        /* Spotify-style for music */
+        .spotify-card { 
+            background: #121212; 
+            border-radius: 8px; 
+            padding: 20px; 
+            transition: background-color 0.3s ease;
+            margin-bottom: 15px;
+            border: 1px solid #282828;
+        }
+        
+        .spotify-card:hover { 
+            background: #1a1a1a; 
+        }
+        
+        .spotify-track { 
+            display: flex; 
+            align-items: center; 
+        }
+        
+        .spotify-cover { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 4px; 
+            background: #1db954; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .spotify-info { 
+            margin-left: 15px; 
+            flex-grow: 1; 
+        }
+        
+        .spotify-title { 
+            color: white; 
+            font-weight: 500; 
+            margin: 0; 
+        }
+        
+        .spotify-artist { 
+            color: #b3b3b3; 
+            font-size: 14px; 
+            margin: 0; 
+        }
+        
+        .spotify-controls { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        
+        .play-btn { 
+            background: #1db954; 
+            border: none; 
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px; 
+            color: black; 
+        }
+        
+        .play-btn:hover { 
+            background: #1ed760; 
+        }
+        
+        /* Category selector */
+        .category-nav { 
+            background: #1f1f1f; 
+            padding: 20px 0; 
+            margin-bottom: 30px; 
+        }
+        
+        .category-btn { 
+            background: transparent; 
+            border: 2px solid #333; 
+            color: #b3b3b3; 
+            padding: 10px 20px; 
+            margin: 0 10px; 
+            border-radius: 25px; 
+            transition: all 0.3s ease;
+        }
+        
+        .category-btn.active, .category-btn:hover { 
+            border-color: #E50914; 
+            background: #E50914; 
+            color: white; 
+        }
+        
+        .upload-section { 
+            background: #1f1f1f; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 30px; 
+        }
+        
+        .btn-upload { 
+            background: #E50914; 
+            border: none; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+        }
+        
+        .btn-upload:hover { 
+            background: #b20710; 
+            color: white; 
+        }
+
+        .folder-card {
+            background: #1f1f1f;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .folder-card:hover {
+            border-color: #E50914;
+            background: #2f2f2f;
+        }
+
+        .form-control, .form-select {
+            background: #2f2f2f;
+            border: 1px solid #444;
+            color: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #2f2f2f;
+            border-color: #E50914;
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(229, 9, 20, 0.25);
+        }
+
+        .form-label {
+            color: #b3b3b3;
+        }
+
+        .back-folder {
+            background-color: #2a3746;
+            border: 2px dashed #4a5b70;
+        }
+        .back-folder:hover {
+            background-color: #3a4a5c;
+            border-color: #6a7b90;
+        }
+
+        /* Audio file item styling */
+        .audio-file-item {
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .audio-file-item:hover {
+            background-color: rgba(229, 9, 20, 0.1);
+            border-left-color: #E50914;
+        }
+
+        .audio-file-item .play-icon {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .audio-file-item:hover .play-icon {
+            opacity: 1;
+        }
+
+        /* Add padding at the bottom when music player is active */
+        .music-player-active {
+            padding-bottom: 100px;
+        }
+
+        .media-thumbnail {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .media-thumbnail:hover {
+            transform: scale(1.02);
+        }
+
+        /* Breadcrumb navigation styles */
+        .breadcrumb-nav {
+            background: #1f1f1f;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        
+        .breadcrumb-item {
+            color: #b3b3b3;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .breadcrumb-item:hover {
+            color: #E50914;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: white;
+            font-weight: 500;
+        }
+        
+        .breadcrumb-separator {
+            color: #666;
+            margin: 0 8px;
+            font-size: 14px;
+        }
+        
+        .back-nav-button {
+            background: #E50914;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.2s ease;
+        }
+        
+        .back-nav-button:hover {
+            background: #b20710;
+            color: white;
+        }
+
+        /* Additional mobile styles for breadcrumb */
+        @media (max-width: 768px) {
+            .breadcrumb-nav .d-flex {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .back-nav-button {
+                padding: 10px 16px;
+                font-size: 14px;
+                align-self: flex-start;
+            }
+            
+            .breadcrumb-item {
+                font-size: 13px;
+            }
+            
+            .breadcrumb-separator {
+                margin: 0 6px;
+            }
+        }
+    </style>
+    
+    <!-- Include music player CSS -->
+    <link rel="stylesheet" href="/css/musicPlayer.css">
+    <!-- Add the image viewer CSS -->
+    <link rel="stylesheet" href="/css/imageViewer.css">
+</head>
+<body class="<%= (typeof category !== 'undefined' && category === 'music') ? 'music-player-active' : '' %>">
+    <!-- Check user in navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-photo-video"></i> MediaFlix</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a class="nav-link active" href="/files"><i class="fas fa-folder"></i> Browse</a>
+                <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <a class="nav-link" href="/admin"><i class="fas fa-users-cog"></i> Admin</a>
+                <% } %>
+                <a class="nav-link" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Category Navigation -->
+        <div class="category-nav text-center">
+            <button class="category-btn active" data-category="videos"><i class="fas fa-video"></i> Videos</button>
+            <button class="category-btn" data-category="images"><i class="fas fa-images"></i> Photos</button>
+            <button class="category-btn" data-category="gifs"><i class="fas fa-magic"></i> GIFs</button>
+            <button class="category-btn" data-category="music"><i class="fas fa-music"></i> Music</button>
+        </div>
+
+        <!-- Upload Section (only for developers/admins) -->
+        <% if (typeof user !== 'undefined' && user && (user.role === 'developer' || user.role === 'admin')) { %>
+        <div class="upload-section">
+            <h5><i class="fas fa-upload"></i> Upload Content</h5>
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select id="uploadCategory" class="form-select">
+                        <option value="videos">Videos</option>
+                        <option value="images">Photos</option>
+                        <option value="gifs">GIFs</option>
+                        <option value="music">Music</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Choose File</label>
+                    <input type="file" name="file" id="fileInput" class="form-control" multiple>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isPublic">
+                        <label class="form-check-label" for="isPublic">Make Public</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-upload w-100" onclick="uploadFile()">Upload</button>
+                </div>
+            </div>
+            <div id="upload-status" class="mt-3"></div>
+
+            <!-- New Folder Section -->
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <label class="form-label">New Folder Name</label>
+                    <input type="text" id="folderName" class="form-control" placeholder="Enter folder name">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-upload w-100 mt-4" onclick="createFolder()">Create Folder</button>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Content Container -->
+        <div id="content-container">
+            <div class="text-center">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p>Loading content...</p>
+            </div>
+        </div>
+
+        <!-- Hidden Audio Player -->
+        <audio id="audio-player" controls style="display:none;"></audio>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentCategory = 'videos';
+        let currentFolder = null;
+        let imageFiles = [];
+        let audioPlayers = []; // Array to store all audio players
+        
+        // Pass user role from server to client - with proper existence checking
+        const userRole = '<%= typeof user !== "undefined" && user ? user.role : "guest" %>';
+        const isAuthorized = userRole === 'developer' || userRole === 'admin';
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/auth/logout', { method: 'POST' })
+                    .then(() => window.location.href = '/login')
+                    .catch(() => window.location.href = '/login');
+            }
+        }
+
+        function loadContent() {
+            console.log('loadContent called - currentFolder:', currentFolder, 'currentCategory:', currentCategory);
+            
+            // Update breadcrumb navigation
+            updateBreadcrumb();
+            
+            // Show loading indicator
+            document.getElementById('content-container').innerHTML = `
+                <div class="text-center" style="padding: 40px;">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 10px;">Loading content...</p>
+                </div>
+            `;
+            
+            let url = `/api/files/${currentCategory}`;
+            if (currentFolder) {
+                url += `?folderId=${currentFolder}`;
+            }
+            console.log('Fetching URL:', url);
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('content-container').innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                        return;
+                    }
+                    
+                    // Load folders first
+                    loadFolders().then(() => {
+                        if (!data.files || data.files.length === 0) {
+                            document.getElementById('content-container').innerHTML += '<div class="alert alert-info">No content found in this category</div>';
+                            return;
+                        }
+                        renderContent(data.files, currentCategory);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('content-container').innerHTML = '<div class="alert alert-danger">Failed to load content</div>';
+                });
+        }
+
+        async function loadFolders() {
+            try {
+                let url = '/api/files/folders';
+                const params = new URLSearchParams();
+                params.append('category', currentCategory);
+                
+                if (currentFolder) {
+                    params.append('parentId', currentFolder);
+                }
+                
+                url += '?' + params.toString();
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.folders && data.folders.length > 0) {
+                    renderFolders(data.folders);
+                } else {
+                    document.getElementById('content-container').innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error loading folders:', error);
+                document.getElementById('content-container').innerHTML = '';
+            }
+        }
+
+        function renderFolders(folders) {
+            let html = '<div class="row mb-4">';
+            folders.forEach((folder) => {
+                html += `
+                    <div class="col-md-3 col-lg-2 mb-3">
+                        <div class="folder-card" data-folder-id="${folder.id}" data-folder-name="${folder.name}" onclick="enterFolder('${folder.id}', '${folder.name}')">
+                            <div class="text-center">
+                                <i class="fas fa-folder fa-2x text-warning"></i>
+                                <h6 class="mt-2">${folder.name}</h6>`;
+                                
+                if (isAuthorized) {
+                    html += `
+                                <button onclick="event.stopPropagation(); deleteFolder('${folder.id}')" 
+                                        class="btn btn-sm btn-outline-danger mt-2">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>`;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function enterFolder(folderId, folderName = '') {
+            console.log('enterFolder called with:', folderId, folderName);
+            
+            // Store current folder info for breadcrumb
+            if (currentFolder) {
+                // We're entering a subfolder
+                folderBreadcrumb.push({
+                    id: currentFolder,
+                    name: currentFolderName
+                });
+                console.log('Added to breadcrumb:', currentFolder, currentFolderName);
+            }
+            
+            currentFolder = folderId;
+            currentFolderName = folderName;
+            console.log('New folder state:', currentFolder, currentFolderName);
+            loadContent();
+        }
+
+        function goBack() {
+            if (folderBreadcrumb.length > 0) {
+                // Go back to previous folder
+                const previousFolder = folderBreadcrumb.pop();
+                currentFolder = previousFolder.id;
+                currentFolderName = previousFolder.name;
+            } else {
+                // Go back to root
+                currentFolder = null;
+                currentFolderName = '';
+            }
+            loadContent();
+        }
+
+        function goToRoot() {
+            currentFolder = null;
+            currentFolderName = '';
+            folderBreadcrumb = [];
+            loadContent();
+        }
+
+        function updateBreadcrumb() {
+            const breadcrumbContainer = document.getElementById('breadcrumb-container');
+            
+            if (!breadcrumbContainer) {
+                return;
+            }
+            
+            if (!currentFolder) {
+                // We're in the root, hide breadcrumb
+                breadcrumbContainer.style.display = 'none';
+                return;
+            }
+            
+            // We're in a subfolder, show breadcrumb
+            breadcrumbContainer.style.display = 'block';
+            
+            let breadcrumbHTML = `
+                <div class="breadcrumb-nav">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <a href="#" onclick="goToRoot()" class="breadcrumb-item">
+                                <i class="fas fa-home"></i> ${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}
+                            </a>
+            `;
+            
+            // Add intermediate folders
+            folderBreadcrumb.forEach((folder, index) => {
+                breadcrumbHTML += `
+                    <span class="breadcrumb-separator">›</span>
+                    <a href="#" onclick="goToFolderByIndex(${index})" class="breadcrumb-item">${folder.name}</a>
+                `;
+            });
+            
+            // Add current folder
+            breadcrumbHTML += `
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-item active">${currentFolderName}</span>
+                        </div>
+                        <button onclick="goBack()" class="back-nav-button">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            breadcrumbContainer.innerHTML = breadcrumbHTML;
+        }
+
+        function goToFolderByIndex(index) {
+            // Navigate to a specific folder in the breadcrumb path
+            const targetFolder = folderBreadcrumb[index];
+            
+            // Remove all folders after this index from breadcrumb
+            folderBreadcrumb = folderBreadcrumb.slice(0, index);
+            
+            currentFolder = targetFolder.id;
+            currentFolderName = targetFolder.name;
+            loadContent();
+        }
+
+        function renderContent(files, category) {
+            let html = '';
+            
+            if (category === 'videos') {
+                // Netflix-style for videos
+                html = '<div class="row">';
+                files.forEach((file) => {
+                    html += `
+                        <div class="col-md-4 col-lg-3">
+                            <div class="netflix-card" onclick="playVideo('${file.fileUrl}', '${file.originalName}')">`;
+                    
+                    if (file.thumbnailUrl) {
+                        html += `<img src="${file.thumbnailUrl}" class="netflix-thumbnail" alt="${file.originalName}">`;
+                    } else {
+                        html += `<div class="netflix-thumbnail d-flex align-items-center justify-content-center" style="background:#333;">
+                                    <i class="fas fa-video fa-3x text-white"></i>
+                                </div>`;
+                    }
+                    
+                    html += `
+                                <div class="netflix-info">
+                                    <h6 class="mb-1">${file.originalName}</h6>
+                                    <small class="text-muted">${formatFileSize(file.size)}</small>`;
+                    
+                    if (isAuthorized) {
+                        html += `
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-danger me-1" onclick="event.stopPropagation(); deleteFile('${file.id}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                        <a href="${file.downloadUrl}" class="btn btn-sm btn-outline-light" onclick="event.stopPropagation()">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </div>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+            } 
+            else if (category === 'images' || category === 'gifs') {
+                imageFiles = files; // Store all image files globally
+                // Instagram-style for images/gifs
+                html = '<div class="row justify-content-center">';
+                files.forEach((file, index) => {
+                    html += `
+                        <div class="col-md-6 col-lg-4">
+                            <div class="instagram-card">
+                                <div class="instagram-header">
+                                    <div class="instagram-avatar d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    <div class="instagram-username">${file.uploadedBy}</div>
+                                </div>`;
+                    
+                    if (file.thumbnailUrl) {
+                        html += `<img src="${file.thumbnailUrl}" class="instagram-image" alt="${file.originalName}" onclick="viewImage(${index})">`;
+                    } else {
+                        html += `<div class="instagram-image d-flex align-items-center justify-content-center" style="background:#f8f9fa;" onclick="viewImage(${index})">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>`;
+                    }
+                    
+                    html += `
+                                <div class="instagram-actions">
+                                    <i class="fas fa-heart text-danger me-3"></i>
+                                    <i class="fas fa-comment me-3"></i>
+                                    <i class="fas fa-share me-3"></i>
+                                </div>
+                                <div class="instagram-info">
+                                    <strong>${file.originalName}</strong><br>
+                                    <small class="text-muted">
+                                        ${formatDate(file.uploadedAt)} • ${formatFileSize(file.size)}
+                                    </small>`;
+                    
+                    if (isAuthorized) {
+                        html += `
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-danger me-1" onclick="deleteFile('${file.id}')">Delete</button>
+                                        <a href="${file.downloadUrl}" class="btn btn-sm btn-primary">Download</a>
+                                    </div>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+            }
+            else if (category === 'music') {
+                // Spotify-style for music
+                audioPlayers = []; // Reset audio players array when rendering new content
+                
+                files.forEach((file, index) => {
+                    const audioId = `audio-${file.id}`;
+                    
+                    html += `
+                        <div class="spotify-card">
+                            <div class="spotify-track">
+                                <div class="spotify-cover">
+                                    <i class="fas fa-music text-black"></i>
+                                </div>
+                                <div class="spotify-info">
+                                    <p class="spotify-title">${file.originalName}</p>
+                                    <p class="spotify-artist">By ${file.uploadedBy} • ${formatDate(file.uploadedAt)}</p>
+                                </div>
+                                <div class="spotify-controls">
+                                    <button class="play-btn" data-audio-index="${index}" onclick="togglePlay('${audioId}', ${index})">
+                                        <i class="fas fa-play"></i>
+                                    </button>`;
+                    
+                    if (isAuthorized) {
+                        html += `
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFile('${file.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <a href="${file.downloadUrl}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download"></i>
+                                    </a>`;
+                    }
+                    
+                    html += `
+                                </div>
+                            </div>
+                            <audio id="${audioId}" class="w-100 mt-3" controls data-index="${index}">
+                                <source src="${file.fileUrl}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>`;
+                });
+            }
+            
+            document.getElementById('content-container').innerHTML += html;
+            
+            // Setup auto-play functionality for audio players
+            if (category === 'music') {
+                setupAutoPlay();
+            }
+        }
+
+        function playVideo(videoUrl, title) {
+            const modal = `
+                <div class="modal fade" id="videoModal" tabindex="-1" style="z-index:9999;">
+                  <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content bg-dark">
+                      <div class="modal-header border-0">
+                        <h5 class="modal-title text-white">${title}</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body text-center">
+                        <video controls autoplay style="max-height:80vh; max-width:100%;" class="d-block mx-auto">
+                          <source src="${videoUrl}" type="video/mp4">
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modal);
+            const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+            videoModal.show();
+            
+            document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+                this.remove();
+            });
+        }
+
+        function viewImage(index) {
+            if (!window.mediaViewer) {
+                console.error('MediaViewer not initialized');
+                return;
+            }
+            
+            // Convert imageFiles to MediaViewer format
+            const mediaItems = imageFiles.map(file => ({
+                type: file.category === 'gifs' ? 'gif' : 'image',
+                url: file.fileUrl,
+                caption: file.originalName
+            }));
+            
+            // Open with the new viewer
+            window.mediaViewer.open(mediaItems, index);
+        }
+
+        function setupAutoPlay() {
+            // Collect all audio elements and add event listeners
+            audioPlayers = Array.from(document.querySelectorAll('audio[id^="audio-"]'));
+            
+            audioPlayers.forEach((audio, index) => {
+                // Remove existing event listeners if any
+                audio.removeEventListener('ended', handleAudioEnd);
+                
+                // Add new event listener
+                audio.addEventListener('ended', handleAudioEnd);
+            });
+        }
+        
+        function handleAudioEnd(event) {
+            const currentIndex = parseInt(event.target.getAttribute('data-index'));
+            const nextIndex = currentIndex + 1;
+            
+            // If there's a next audio file, play it
+            if (nextIndex < audioPlayers.length) {
+                const nextAudio = audioPlayers[nextIndex];
+                const nextAudioId = nextAudio.id;
+                
+                // Reset all play button icons
+                document.querySelectorAll('.play-btn i').forEach(icon => {
+                    icon.className = 'fas fa-play';
+                });
+                
+                // Update the play button icon for the next track
+                const nextButton = document.querySelector(`.play-btn[data-audio-index="${nextIndex}"] i`);
+                if (nextButton) {
+                    nextButton.className = 'fas fa-pause';
+                }
+                
+                nextAudio.play();
+            }
+        }
+        
+        function togglePlay(audioId, index) {
+            const audio = document.getElementById(audioId);
+            const button = audio.previousElementSibling.querySelector('.play-btn i');
+            
+            if (audio.paused) {
+                // Pause all other audio elements
+                document.querySelectorAll('audio').forEach(a => {
+                    if (a !== audio) {
+                        a.pause();
+                        const playBtn = a.parentElement.querySelector('.play-btn i');
+                        if (playBtn) {
+                            playBtn.className = 'fas fa-play';
+                        }
+                    }
+                });
+                
+                audio.play();
+                button.className = 'fas fa-pause';
+            } else {
+                audio.pause();
+                button.className = 'fas fa-play';
+            }
+        }
+        
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const category = document.getElementById('uploadCategory').value;
+            const isPublic = document.getElementById('isPublic').checked;
+            const statusDiv = document.getElementById('upload-status');
+
+            if (fileInput.files.length === 0) {
+                statusDiv.innerHTML = '<div class="alert alert-warning">Please select at least one file</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('isPublic', isPublic);
+            if (currentFolder) {
+                formData.append('folderId', currentFolder);
+            }
+            
+            for (const file of fileInput.files) {
+                formData.append('file', file);
+            }
+
+            statusDiv.innerHTML = '<div class="alert alert-info">Uploading...</div>';
+
+            fetch(`/api/files/upload/${category}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    statusDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                } else {
+                    statusDiv.innerHTML = '<div class="alert alert-success">File uploaded successfully!</div>';
+                    fileInput.value = '';
+                    if (currentCategory === category) {
+                        loadContent();
+                    }
+                    setTimeout(() => statusDiv.innerHTML = '', 3000);
+                }
+            })
+            .catch(error => {
+                statusDiv.innerHTML = '<div class="alert alert-danger">Upload failed</div>';
+            });
+        }
+
+        function deleteFile(fileId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            fetch(`/api/files/${fileId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(`Error: ${data.error}`);
+                    } else {
+                        loadContent();
+                    }
+                })
+                .catch(error => {
+                    alert('Delete failed');
+                });
+        }
+
+        function createFolder() {
+            const name = document.getElementById('folderName').value.trim();
+            if (!name) return alert('Please enter a folder name');
+            
+            const folderData = {
+                name: name,
+                category: currentCategory,
+                isPublic: false
+            };
+            
+            if (currentFolder) {
+                folderData.parentId = currentFolder;
+            }
+            
+            fetch('/api/files/folders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(folderData)
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Folder created!');
+                    document.getElementById('folderName').value = '';
+                    loadContent();
+                }
+            })
+            .catch(() => alert('Failed to create folder'));
+        }
+
+        function deleteFolder(folderId) {
+            if (!confirm('Are you sure you want to delete this folder?')) return;
+            
+            fetch(`/api/files/folders/${folderId}`, { method: 'DELETE' })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert('Folder deleted successfully!');
+                        loadContent();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting folder:', error);
+                    alert('Failed to delete folder');
+                });
+        }
+
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Category navigation
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCategory = this.dataset.category;
+                currentFolder = null; // Reset folder when changing category
+                document.getElementById('uploadCategory').value = currentCategory;
+                loadContent();
+            });
+        });
+
+        // Auto-pause audio when video modal opens
+        document.addEventListener('show.bs.modal', function() {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.pause();
+                audio.parentElement.querySelector('.play-btn i').className = 'fas fa-play';
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Only trigger if not typing in input fields
+            if (event.target.tagName.toLowerCase() === 'input' || event.target.tagName.toLowerCase() === 'textarea') {
+                return;
+            }
+            
+            switch(event.key) {
+                case '1':
+                    switchCategory('videos');
+                    break;
+                case '2':
+                    switchCategory('images');
+                    break;
+                case '3':
+                    switchCategory('gifs');
+                    break;
+                case '4':
+                    switchCategory('music');
+                    break;
+                case 'r':
+                case 'R':
+                    if (event.ctrlKey || event.metaKey) {
+                        event.preventDefault();
+                        loadContent();
+                    }
+                    break;
+            }
+        });
+
+        function switchCategory(category) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.category === category) {
+                    btn.classList.add('active');
+                }
+            });
+            currentCategory = category;
+            currentFolder = null;
+            document.getElementById('uploadCategory').value = category;
+            loadContent();
+        }
+
+        // Load initial content
+        loadContent();
+
+        // Audio file item click handlers
+        function setupAudioClickHandlers() {
+            document.querySelectorAll('.audio-file-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const fileId = this.getAttribute('data-id');
+                    const fileUrl = this.getAttribute('data-url');
+                    const fileName = this.getAttribute('data-title');
+                    const thumbnail = this.getAttribute('data-thumbnail');
+                    const artist = this.getAttribute('data-artist') || null;
+                    const duration = this.getAttribute('data-duration') || null;
+                    
+                    playMusic(fileId, fileUrl, fileName, thumbnail, artist, duration);
+                });
+            });
+        }
+        
+        // Test to verify new code is loaded
+        console.log('=== NEW JAVASCRIPT VERSION LOADED ===', new Date().toISOString());
+        
+        // Debug functions 
+        window.debugFolders = function() {
+            console.log('Current state:');
+            console.log('- Category:', currentCategory);
+            console.log('- Folder:', currentFolder);
+            console.log('- Folder name:', currentFolderName);
+            console.log('- User role:', userRole);
+            console.log('- Is authorized:', isAuthorized);
+            
+            loadFolders().then(html => {
+                console.log('Folder HTML length:', html.length);
+                if (html) {
+                    console.log('First 200 chars:', html.substring(0, 200));
+                }
+            });
+        };
+
+        // Run setup when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('=== DOM LOADED - NEW VERSION ACTIVE ===');
+            setupAudioClickHandlers();
+            loadContent();
+        });
+    </script>
+
+</body>
+</html>
